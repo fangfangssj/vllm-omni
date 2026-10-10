@@ -13,7 +13,6 @@
 
 This recipe covers the qualified single-stage online text-to-image path. Other
 BAGEL tasks and deployment topologies are not covered by this NPU qualification.
-For CUDA deployment examples, see [BAGEL-7B-MoT.md](BAGEL-7B-MoT.md).
 
 ## References
 
@@ -63,8 +62,3 @@ vllm serve "${MODEL}" \
   --trust-remote-code \
   --port 8091
 ```
-
-## Verification
-
-A 512x512 text-to-image request with two inference steps returned HTTP 200 and
-a generated image on the single-stage server.

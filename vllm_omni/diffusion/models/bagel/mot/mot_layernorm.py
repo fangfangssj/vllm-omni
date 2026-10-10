@@ -115,14 +115,18 @@ class MoTRMSNorm(CustomOp):
         return (x * weight.float()).to(orig_dtype)
 
     def _rms_norm_npu(self, x: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:
-        # Use the fused CANN operator to replace the native Pow/ReduceMean/rsqrt
-        # sequence. The NPU operator requires gamma to match the input dtype.
+        if x.device.type != "npu":
+            return self._rms_norm_native(x, weight)
+
+        # Keep the native path's fp32 input and weight math while using the
+        # fused CANN operator. npu_rms_norm requires matching input and gamma dtypes.
         import torch_npu
 
-        if weight.dtype != x.dtype or weight.device != x.device:
-            weight = weight.to(device=x.device, dtype=x.dtype)
+        orig_dtype = x.dtype
+        x = x.float()
+        weight = weight.to(device=x.device, dtype=torch.float32)
         normalized, _ = torch_npu.npu_rms_norm(x, weight, epsilon=self.variance_epsilon)
-        return normalized
+        return normalized.to(orig_dtype)
 
     def extra_repr(self) -> str:
         return f"hidden_size={self.hidden_size}, eps={self.variance_epsilon}"
