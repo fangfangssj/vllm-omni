@@ -31,7 +31,7 @@ BAGEL tasks and deployment topologies are not covered by this NPU qualification.
 - OS: Linux
 - Python: 3.12
 - Driver / runtime: CANN 9.1.0 with ATB
-- vLLM: 0.30.0
+- vLLM: 0.31.0
 - vLLM-Omni: checkout containing the BAGEL NPU RMSNorm implementation
 
 Activate both CANN and ATB before launching vLLM-Omni:
