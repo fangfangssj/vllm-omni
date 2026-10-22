@@ -5,6 +5,7 @@ import pytest
 import torch
 
 import vllm_omni.diffusion.layers.custom_op as custom_op
+from tests.helpers.mark import hardware_test
 from vllm_omni.diffusion.models.bagel.mot.mot_layernorm import MoTRMSNorm
 
 pytestmark = [pytest.mark.core_model, pytest.mark.diffusion]
@@ -40,7 +41,7 @@ def test_mot_rms_norm_npu_falls_back_to_native(monkeypatch, use_mot_routing: boo
     torch.testing.assert_close(actual, expected)
 
 
-@pytest.mark.npu
+@hardware_test(res={"npu": "A3"}, num_cards=1)
 def test_mot_rms_norm_npu_fused_cann_matches_native():
     pytest.importorskip("torch_npu")
     if not hasattr(torch, "npu") or not torch.npu.is_available():
